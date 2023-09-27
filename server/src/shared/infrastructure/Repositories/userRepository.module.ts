@@ -5,6 +5,6 @@ import { DatabaseUserRepository } from './user.repository';
 @Module({
   imports: [DatabaseEntitiesModule],
   providers: [DatabaseUserRepository],
-  exports: [DatabaseUserRepository]
+  exports: [DatabaseUserRepository],
 })
-export class RepositoryModule { }
+export class RepositoryModule {}

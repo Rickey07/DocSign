@@ -12,8 +12,7 @@ export class DatabaseUserRepository {
   ) {}
 
   async createUser(email: string, password: string): Promise<User> {
-    console.log(email, password);
-    const newUser = new this.userRepo(email, password);
+    const newUser = new this.userRepo({ email, password });
     const createdUser = await newUser.save();
     return createdUser;
   }

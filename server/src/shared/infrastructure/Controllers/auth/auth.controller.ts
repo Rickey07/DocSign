@@ -18,4 +18,15 @@ export class AuthController {
       return error;
     }
   }
+
+  @Post('signin')
+  async loginUser(@Body() authUserDTO: authUserDTO): Promise<any> {
+    try {
+      const { email, password } = authUserDTO;
+      const data = await this.authUseCases.loginUser(email, password);
+      return data;
+    } catch (error) {
+      return error;
+    }
+  }
 }
