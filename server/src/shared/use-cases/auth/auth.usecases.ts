@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseUserRepository } from 'src/shared/infrastructure/Repositories/user.repository';
 import { BcryptService } from 'src/shared/infrastructure/Services/Bcrypt/Bcrypt.service';
 import { JWTService } from 'src/shared/infrastructure/Services/JWT/Jwt.service';
+import { ZohoService } from 'src/shared/infrastructure/Services/Zoho/zoho.service';
 
 @Injectable()
 export class LoginUseCases {
@@ -9,6 +10,7 @@ export class LoginUseCases {
     private readonly userService: DatabaseUserRepository,
     private readonly jwtService: JWTService,
     private readonly passwordService: BcryptService,
+    private readonly zohoService: ZohoService,
   ) {}
 
   async registerUser(email: string, password: string) {
@@ -48,6 +50,9 @@ export class LoginUseCases {
       // Generate access token with below payload
       const payload = { sub: isUserExists._id, email: isUserExists.email };
       const token = await this.jwtService.generateToken(payload);
+      const mainToken =
+        await this.zohoService.generateAccessTokenByRefreshToken();
+      console.log(mainToken);
       const data = {
         token,
         details: {

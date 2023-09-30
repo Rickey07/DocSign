@@ -1,11 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { authUserDTO } from './auth.dto';
 import { LoginUseCases } from 'src/shared/use-cases/auth/auth.usecases';
+import { Public } from '../../configs/Guards/Public.guard.config';
 
 @Controller()
 export class AuthController {
   constructor(private authUseCases: LoginUseCases) {}
   @Post('signup')
+  @Public()
   async registerUser(@Body() authUserDTO: authUserDTO) {
     try {
       const { email, password } = authUserDTO;
@@ -20,6 +22,7 @@ export class AuthController {
   }
 
   @Post('signin')
+  @Public()
   async loginUser(@Body() authUserDTO: authUserDTO): Promise<any> {
     try {
       const { email, password } = authUserDTO;
