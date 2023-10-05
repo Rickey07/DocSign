@@ -1,4 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { BcryptService } from './Bcrypt/Bcrypt.service';
@@ -13,6 +14,7 @@ import { ZohoService } from './Zoho/zoho.service';
       signOptions: { expiresIn: '2days' },
     }),
     HttpModule,
+    CacheModule.register(),
   ],
   providers: [JWTService, BcryptService, ZohoService],
   exports: [JWTService, BcryptService, ZohoService],

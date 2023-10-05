@@ -50,8 +50,7 @@ export class LoginUseCases {
       // Generate access token with below payload
       const payload = { sub: isUserExists._id, email: isUserExists.email };
       const token = await this.jwtService.generateToken(payload);
-      const mainToken =
-        await this.zohoService.generateAccessTokenByRefreshToken();
+      const mainToken = await this.zohoService.getCachedToken();
       console.log(mainToken);
       const data = {
         token,

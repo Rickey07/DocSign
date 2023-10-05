@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ZohoDocument } from 'src/shared/domain/Services/Zoho/zohoDocument.interface';
 import * as FormData from 'form-data';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ZohoService {
@@ -11,7 +13,24 @@ export class ZohoService {
   #refreshToken = process.env.ZOHO_REFRESH_TOKEN;
   #clientId = process.env.ZOHO_CLIENT_ID;
   #clientSecret = process.env.ZOHO_CLIENT_SECRET;
-  constructor(private readonly callApi: HttpService) {}
+  constructor(
+    private readonly callApi: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+
+  async getCachedToken(): Promise<string> {
+    let value: string | undefined = await this.cacheManager.get('access_token');
+    console.log(value);
+    if (value === undefined) {
+      const access_token = await this.generateAccessTokenByRefreshToken();
+      console.log(access_token);
+      if (access_token) {
+        await this.cacheManager.set('access_token', access_token, 0);
+      }
+      value = access_token;
+    }
+    return value;
+  }
 
   async generateAccessTokenByRefreshToken(): Promise<string> {
     const refreshToken = this.#refreshToken;
@@ -44,16 +63,13 @@ export class ZohoService {
       const response = await this.callApi.axiosRef.post(url, formData, {
         headers: {
           ...formData.getHeaders(),
-          Authorization: `Zoho-oauthtoken 1000.480f2df4c7c0fbd4fa4a45f5a3d86ddd.cf621c5b3819a16d9e3d9a0f113ce77b`,
+          Authorization: `Zoho-oauthtoken 1000.66b947a2e7f6dfed4d8ef9f0a0427fc2.61996f21870d3de7db05f19216973107`,
         },
       });
-      console.log(url)
-      console.log(response?.data, 'Prabadhya');
+      return response?.data;
     } catch (error) {
-      // console.log(error);
+      console.log(error);
       return error;
     }
   }
 }
-
-// "request_type_id":"1",
